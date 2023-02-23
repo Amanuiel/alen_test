@@ -22,6 +22,7 @@ app.get('/', (req, res) => {
   res.send('GET request to the homepage')
 })
 
+//routes
 app.use('/book', BookRouter)
 app.use('/author', AuthorRouter)
 
