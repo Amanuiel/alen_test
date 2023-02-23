@@ -1,10 +1,13 @@
 import express from 'express';
 import ErrorMiddleware from './middleware/index.js';
 import dotenv from 'dotenv';
-const mongoose = require('mongoose');
+
+import mongoose from 'mongoose';
+
 const app = express()
 dotenv.config()
 
+mongoose.set('strictQuery', false);
 mongoose.connect(process.env.DB_URL, {})
     .then(() => console.log('connected...'))
     .catch(err => console.log(err))
@@ -22,7 +25,6 @@ app.get('/', (req, res, next) => {
         return next(error);
     }
 })
-
 
 
 app.use(ErrorMiddleware)
