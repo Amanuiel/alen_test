@@ -1,4 +1,6 @@
-const ErrorMiddleware = async (error, req, res, next) => {
+import passport from 'passport';
+
+export const ErrorMiddleware = async (error, req, res, next) => {
     let status = error.status || 500;
     let message = error.message || 'Something went wrong';
     let stack = null;
@@ -24,5 +26,7 @@ const ErrorMiddleware = async (error, req, res, next) => {
         })
 }
 
-export default ErrorMiddleware;
+
+export const auth = passport.authenticate('jwt', { session: false });
+
 
