@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 // import cors from 'cors';
 import mongoose from 'mongoose';
 import BookRouter from './routes/BookRoute.js';
+import AuthorRouter from './routes/AuthorRoute.js';
 
 const app = express()
 dotenv.config()
@@ -22,6 +23,8 @@ app.get('/', (req, res) => {
 })
 
 app.use('/book', BookRouter)
+app.use('/author', AuthorRouter)
+
 app.use(ErrorMiddleware)
 
 app.listen(process.env.PORT, () => console.log(`${process.env.NODE_ENV.toUpperCase()} Server is listening on port ${process.env.PORT}!`))
