@@ -1,13 +1,12 @@
-const express = require('express')
+import express from 'express';
+import { getAllBooks, getBook, insertBook, updateBook, removeBook } from '../controllers/BookController.js'
 
-const bookRouter = express.Router()
+const BookRouter = express.Router()
 
-bookRouter.get('/', (req, res) => {
-    res.send('routes are working')
-})
+BookRouter.get('/', getAllBooks)
+BookRouter.get('/:id', getBook)
+BookRouter.post('/insert', insertBook)
+BookRouter.patch('/update/:id', updateBook)
+BookRouter.delete('/remove/:id', removeBook)
 
-bookRouter.post('/insertbook', require('../controllers/BookController'))
-bookRouter.patch('/updatebook', require('../controllers/BookController'))
-bookRouter.delete('/removebook', require('../controllers/BookController'))
-
-module.exports = bookRouter
+export default BookRouter 
