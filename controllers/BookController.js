@@ -22,7 +22,14 @@ export const getBook = async (req, res) => {
 //add new book
 export const insertBook = async (req, res) => {
     try {
-        const bookData = await Book.create({ ...req.body });
+        const bookData = await Book.create({
+            ...req.body,
+        });
+
+        const author = await Author.findById(req.user._id);
+        author.books.push(bookData);
+        await author.save();
+
         return res.status(201).json({ bookData });
     } catch (err) {
         return res.status(400).json({ err });
@@ -31,11 +38,10 @@ export const insertBook = async (req, res) => {
 
 //updating book data
 export const updateBook = async (req, res) => {
-    console.log(req.params.id)
     try {
         const book = await Book.findById(req.params.id);
 
-        if (!book) { 
+        if (!book) {
             return res.status(404).json({ message: 'Book not found' });
         }
 

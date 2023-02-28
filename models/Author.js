@@ -8,6 +8,14 @@ const authorSchema = new mongoose.Schema({
     bio: {
         type: String,
     },
+    email: {
+        type: String,
+        required: true,
+    },
+    password: {
+        type: String,
+        required: true,
+    },
     books: [
         {
             type: Schema.Types.ObjectId, 
@@ -21,6 +29,7 @@ const authorSchema = new mongoose.Schema({
             delete ret.__v;
             delete ret.createdAt;
             delete ret.updatedAt;
+            delete ret.password;
         }
     },
     timestamps: true

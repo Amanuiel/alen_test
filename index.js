@@ -1,9 +1,12 @@
 import express from 'express';
-import ErrorMiddleware from './middleware/index.js';
+import { ErrorMiddleware } from './middleware/index.js';
 import dotenv from 'dotenv';
-// import cors from 'cors';
+import cors from 'cors';
 import mongoose from 'mongoose';
 import BookRouter from './routes/BookRoute.js';
+import passport from 'passport';
+import './config/passport.js';
+import AuthRouter from './routes/AuthRoute.js';
 import AuthorRouter from './routes/AuthorRoute.js';
 
 const app = express()
@@ -16,14 +19,17 @@ mongoose.connect(
     .catch(err => console.log(err))
 
 app.use(express.json())
-// app.use(cors)
+app.use(cors())
+app.use(passport.initialize());
 
 app.get('/', (req, res) => {
   res.send('GET request to the homepage')
 })
 
+app.use('/auth', AuthRouter)
 //routes
 app.use('/book', BookRouter)
+
 app.use('/author', AuthorRouter)
 
 app.use(ErrorMiddleware)
