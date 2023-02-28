@@ -1,50 +1,72 @@
 
-const express = require('express')
-const book = require('../../models/Book.js')
-const author = require('../../models/Author.js')
+import Book from '../models/Book.js'
+import Author from '../models/Author.js'
 
-  //add new book
-  const insertBook = async(req, res)=>{
-    try{
-        const bookData = await Book(req.body).save();
-        if(bookData)
-        return {value: bookData, res, err: null}
-        else
-        return "error"
-    }catch (err) {
-        return {value: null, err: err.message}
+//get all books
+export const getAllBooks = async (req, res) => {
+    const books = await Book.find({})
+    return res.status(200).json({ books });
+}
+
+//get single book by id
+export const getBook = async (req, res) => {
+    const book = await Book.findById(req.params.id);
+
+    if (!book) { 
+        return res.status(404).json({ message: 'Book not found' });
     }
-  }
 
-  //updating book data
-  const updateBook = async(req, res)=>{
-    const id = req.query.id
-    try{
-        const book = await Book.findByIdAndUpdate(req.query.id, {title: req.body.title, description: req.body.description})
-        if(book){
-            return {book: book, res, err: null}
-        }else{
-            return { book: null, err: 'Book not found'}
+    return res.status(200).json({ book });
+}
+
+//add new book
+export const insertBook = async (req, res) => {
+    try {
+        const bookData = await Book.create({
+            ...req.body,
+        });
+
+        const author = await Author.findById(req.user._id);
+        author.books.push(bookData);
+        await author.save();
+
+        return res.status(201).json({ bookData });
+    } catch (err) {
+        return res.status(400).json({ err });
+    }
+}
+
+//updating book data
+export const updateBook = async (req, res) => {
+    try {
+        const book = await Book.findById(req.params.id);
+
+        if (!book) {
+            return res.status(404).json({ message: 'Book not found' });
         }
-    
-    }catch (err){
-        return { book: null, err: err.message}
+
+        book.title = req.body.title;
+        book.description = req.body.description;
+        await book.save();
+
+        return res.status(201).json({ book });
+    } catch (err) {
+        return res.status(404).json({ message: 'Book not found' });
     }
-  }
+}
 
-  //deleting a book
-  const removeBook = async(req, res) =>{
-        const remove = await User.deleteOne({_id: req.query.id},{new: true})
-            if(remove){
-                return {value: remove, err: null}
-            }else{
-                return { value: null, err: 'User not found'}
-            }
-  }
-  
+//deleting a book
+export const removeBook = async (req, res) => {
+    try {
+        const book = await Book.findById(req.params.id);
 
-module.exports = {
-    insertBook,
-    updateBook,
-    removeBook
-};
+        if (!book) {
+            return res.status(404).json({ message: 'Book not found' });
+        }
+
+        await Book.findByIdAndDelete(req.params.id);
+        return res.status(200).json({ book });
+    } catch (err) { 
+        return res.status(404).json({ message: 'Book not found' });
+    }
+}

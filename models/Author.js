@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose, { Schema } from 'mongoose';
 
 const authorSchema = new mongoose.Schema({
     name: {
@@ -7,6 +7,14 @@ const authorSchema = new mongoose.Schema({
     },
     bio: {
         type: String,
+    },
+    email: {
+        type: String,
+        required: true,
+    },
+    password: {
+        type: String,
+        required: true,
     },
     books: [
         {
@@ -21,9 +29,10 @@ const authorSchema = new mongoose.Schema({
             delete ret.__v;
             delete ret.createdAt;
             delete ret.updatedAt;
+            delete ret.password;
         }
     },
     timestamps: true
 });
 
-module.exports = mongoose.model('Author', authorSchema);
+export default mongoose.model('Author', authorSchema);

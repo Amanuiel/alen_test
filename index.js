@@ -1,31 +1,36 @@
 import express from 'express';
-import ErrorMiddleware from './middleware/index.js';
+import { ErrorMiddleware } from './middleware/index.js';
 import dotenv from 'dotenv';
-
+import cors from 'cors';
 import mongoose from 'mongoose';
+import BookRouter from './routes/BookRoute.js';
+import passport from 'passport';
+import './config/passport.js';
+import AuthRouter from './routes/AuthRoute.js';
+import AuthorRouter from './routes/AuthorRoute.js';
 
 const app = express()
 dotenv.config()
 
 mongoose.set('strictQuery', false);
-mongoose.connect(process.env.DB_URL, {})
+mongoose.connect(
+    process.env.NODE_ENV === 'prod' ? process.env.DB_URL : process.env.DB_URL_LOCAL, {})
     .then(() => console.log('connected...'))
     .catch(err => console.log(err))
 
 app.use(express.json())
+app.use(cors())
+app.use(passport.initialize());
 
-app.get('/', (req, res, next) => {
-    try {
-        const user = req.body.user;
-        if (!user) {
-            res.status(404).send({ status: 404, message: 'User Not Found' });
-            // throw new Error("User not found")
-        }
-    } catch (error) {
-        return next(error);
-    }
+app.get('/', (req, res) => {
+  res.send('GET request to the homepage')
 })
 
+app.use('/auth', AuthRouter)
+//routes
+app.use('/book', BookRouter)
+
+app.use('/author', AuthorRouter)
 
 app.use(ErrorMiddleware)
 
